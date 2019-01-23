@@ -32,4 +32,39 @@ AdID，CampaignID, Keywords, thumbnail, Description, Brand, detail_url, Category
 # 3 Search Engine
 
 Developed Search Ads workflow which support: Query understanding, Ads selection from inverted index, Ads ranking, Ads filter, Ads pricing, Ads allocation (Java, Jetty, MySQL, MemCached)
+![Image text](https://github.com/PeterPei666/SearchAds/blob/master/img/Ads_Engine.png)
 
+### 3.1 Web Engine - Jetty
+
+### 3.2 Database
+
+1. Forward Index database: MySQL:
+```sql
+CREATE TABLE `ad` (
+  `adId` int(11) NOT NULL,
+  `campaignId` int(11) DEFAULT NULL,
+  `keyWords` varchar(1024) DEFAULT NULL,
+  `bidPrice` double DEFAULT NULL,
+  `price` double DEFAULT NULL,
+  `thumbnail` mediumtext,
+  `description` mediumtext,
+  `brand` varchar(100) DEFAULT NULL,
+  `detail_url` mediumtext,
+  `category` varchar(1024) DEFAULT NULL,
+  `title` varchar(2048) DEFAULT NULL,
+  PRIMARY KEY (`adId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+```
+
+2. inverted Index database - Memcached
+
+key - keywords of ads
+
+value: HashMap<Long, SortedSet<Integer>> (key : id of ads, value : the position of query in the keywords)
+### 3.3 Distributed System - gRPC
+We can set up multiple index servers and multiple memcached to simulate distributed system.
+```
+ java -jar AdsIndexServer.jar 50051 127.0.0.1 11212 11220  11221 127.0.0.1:3306 searchads root password 11218
+```
+![Image text](https://github.com/PeterPei666/SearchAds/blob/master/img/gRPC.png)
