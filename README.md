@@ -1,5 +1,13 @@
 # 1 Overview 
  
+● Designed and developed web crawler which crawled thousands product data from Amazon (Java, JSoup, Proxy)
+
+● Developed Search Ads workflow which support: Query understanding, Ads selection from inverted index, Ads ranking, Ads filter, Ads pricing(Java, Jetty, MySQL, MemCached)
+
+● Predict click probability with features generated from simulated search log (Python, SparkMLlib)
+
+● Implemented Query rewrite with word2vector algorithm (Python, SparkMLlib)
+
 # 2 Web Crawler
 In the begining of the project, we designed and developed an Asynchronous web crawler which crawled thousands product data from Amazon (Java, JSoup, Proxy)
 ![Image text](https://github.com/PeterPei666/SearchAds/blob/2117a90aac73e98f4ed8220bd8661d2f2c58c556/img/Web%20Crawler.png)
@@ -33,7 +41,7 @@ AdID，CampaignID, Keywords, thumbnail, Description, Brand, detail_url, Category
      
 # 3 Search Engine
 
-Developed Search Ads workflow which support: Query understanding, Ads selection from inverted index, Ads ranking, Ads filter, Ads pricing, Ads allocation (Java, Jetty, MySQL, MemCached)
+Developed Search Ads workflow which support: Query understanding, Ads selection from inverted index, Ads ranking, Ads filter, Ads pricing.(Java, Jetty, MySQL, MemCached)
 ![Image text](https://github.com/PeterPei666/SearchAds/blob/master/img/Ads_Engine.png)
 
 ### 3.1 Web Engine - Jetty
@@ -73,4 +81,54 @@ We can set up multiple index servers and multiple memcached to simulate distribu
 ![Image text](https://github.com/PeterPei666/SearchAds/blob/master/img/gRPC.png)
  
 ### 3.4 Query Understanding
+
+find the current query's synonmy to rewrite the input query
+
+(1)How to find synonmy:  train a word2vec model in Spark
+![Image text](https://github.com/PeterPei666/SearchAds/blob/master/img/word2vec.png)
+
+`generate Taining data`: 
+
+extract title, query, category from web crwaled log, then use a library call nltk to clean the data.
+The input data is like: query title query, category title category. Then use those data to train a word2vec model to find all the synomies for each word.
+
+(2)Offline rewrite :  1. generate rewrite for historical query and store in memcached 2.lookup in key value store for each query in Ads Server
+
+Online rewrite: generate rewrite for query in Ads Server
+
+### 3.5 Ad ranking and pricing
+
+**Rank score** = quality Score * bid
+
+**Quality Score** = d * pClick+ (1 - d) * relevance Score, 0< d < 1
+
+**relevance Score** = TF-IDF Score = IDF score * TF score * fieldNorms = log(numDocs / (docFreq + 1)) * sqrt(tf) * (1/sqrt(length))
+
+How to find probility of click(pClick)?: logisticRegression
+
+(1)generate training data from click log:
+
+generate fake click log by reverse engineering
+
+Feature Matrix
+
+| Feature Key       | Feature Value    |
+| ------------- |:-------------:|
+| User IP     | Click count, impression|
+| User DeviceId    | Click count, impression    | 
+| Ad Id  | Click count, impression    | 
+| QueryClassification_+_AdClassification | Click count, impression     |
+| Query_+_CampaignId| Click count, impression      |
+| Query_+_AdId | Click count, impression      |
+| Percentage of matched terms in Ads | Click count, impression      |
+
+(2)Ad Pricing:
+
+**Cost per click (CPC)**
+= (next quality score/current quality score) * next bid price + 0.01 = next rank score / current quality score + 0.01
+
+
+
+
+
 
