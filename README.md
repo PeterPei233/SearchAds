@@ -127,6 +127,13 @@ Feature Matrix
 **Cost per click (CPC)**
 = (next quality score/current quality score) * next bid price + 0.01 = next rank score / current quality score + 0.01
 
+# 4 Demo
+
+When I input query iced tear master, it will return the following found ads from database. And the click price will be reducted from the budget.
+
+![img](https://github.com/PeterPei666/SearchAds/blob/master/img/show.png)
+
+
 
 
 
