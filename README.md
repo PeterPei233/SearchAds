@@ -129,7 +129,7 @@ Feature Matrix
 
 # 4 Demo
 
-When I input query "iced", "tea", "master", it will return the following found ads from database. And the click price will be reducted from the budget.
+When I input query "iced", "tea", "maker", it will return the following found ads from database. And the click price will be reducted from the budget.
 
 ![img](https://github.com/PeterPei666/SearchAds/blob/master/img/show.png)
 
